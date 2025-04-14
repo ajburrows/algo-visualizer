@@ -9,6 +9,7 @@ function App(){
   const [mousePos, setMousePos] = useState(null)
   const [connections, setConnections] = useState([])
   const [startConnector, setStartConnector] = useState(null)
+  const [hasMoved, setHasMoved] = useState(false)
 
   const startConnectorCleanup = useRef(null)
 
@@ -16,6 +17,7 @@ function App(){
     const handleMouseMove = (e) => {
       // Position nodes relative to the viewport
       setMousePos({ x: e.clientX, y: e.clientY });
+      setHasMoved(true);
     };
   
     if (selectedNodeID !== null) {
@@ -91,28 +93,41 @@ function App(){
     <div>
       <h1>Node Grid</h1>
       <button onClick={addNode}>Add Node</button>
-      {selectedNodeID !== null && mousePos && (
-        <div
-          className='floating-node'
-          style={{
-            position: 'fixed',
-            left: mousePos.x - 30,
-            top: mousePos.y - 30,
-            width: 60,
-            height: 60,
-            backgroundColor: '#646cff',
-            borderRadius: '50%',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            color: 'white',
-            fontWeight: 'bold',
-            pointerEvents: 'none',
-            zIndex: 1000,
-          }}>
+      
+      {selectedNodeID !== null && mousePos && hasMoved && (() => {
+        return (
+          <div
+            className="floating-node node"
+            style={{
+              position: 'fixed',
+              left: mousePos.x - 30,
+              top: mousePos.y - 30,
+              width: 60,
+              height: 60,
+              backgroundColor: '#646cff',
+              borderRadius: '50%',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              color: 'white',
+              fontWeight: 'bold',
+              pointerEvents: 'none',
+              zIndex: 1000,
+            }}
+          >
             {selectedNodeID}
-        </div>
-      )}
+            {['top', 'right', 'bottom', 'left'].map((pos) => (
+              <div
+                key={pos}
+                className={`connector-wrapper ${pos}`}
+              >
+                <div className="connector" />
+              </div>
+            ))}
+          </div>
+        );
+      })()}
+
 
       <div className='grid-wrapper'>
         <svg className="connection-layer">
@@ -193,21 +208,20 @@ function App(){
                       )
                       setSelectedNodeID(null)
                       setMousePos(null)
+                      setHasMoved(false)
                     }
                   }}
                 >
                   <div className="grid-dot"></div>
                   {node && (
                     <div
-                      className={`node ${selectedNodeID === node.ID ? 'hidden' : ''}`}
+                      className={`node ${(selectedNodeID === node.ID && hasMoved) ? 'hidden' : ''}`}
                       onClick={(e) => {
-                        e.stopPropagation()
-                        if (selectedNodeID === null) {
+                      e.stopPropagation()
+                      if (selectedNodeID === null) {
                           setSelectedNodeID(node.ID)
-                        }
-                      }}
-                      
-                    >
+                      }
+                    }}>
                       {node.ID}
                       {['top', 'right', 'bottom', 'left'].map((pos) => (
                         <div
