@@ -1,3 +1,4 @@
+/* === GRID SETUP === */
 .grid {
   display: grid;
   grid-template-columns: repeat(6, 80px);
@@ -22,6 +23,8 @@
   border-radius: 50%;
 }
 
+
+/* === NODE === */
 .node {
   width: 60px;
   height: 60px;
@@ -32,6 +35,98 @@
   justify-content: center;
   color: white;
   font-weight: bold;
-  cursor: grab;
   position: absolute;
+  cursor: pointer;
+}
+
+.node.selected {
+  outline: 3px solid #4caf50;
+}
+
+.node.hidden {
+  opacity: 0;
+}
+
+
+/* === CONNECTORS === */
+.connector-wrapper {
+  position: absolute;
+  width: 0;
+  height: 0;
+  pointer-events: auto;
+  z-index: 2;
+}
+
+/* Correctly positions each connector around the node */
+.connector-wrapper.top {
+  top: 0;
+  transform: translate(-4px, -4px);
+}
+
+.connector-wrapper.bottom {
+  bottom: 0;
+  transform: translate(-4px, -4px);
+}
+
+.connector-wrapper.left {
+  left: 0;
+  transform: translate(-4px, -4px);
+}
+
+.connector-wrapper.right {
+  right: 0;
+  transform: translate(-4px, -4px);
+}
+
+/* The visible circular connector dot */
+.connector {
+  width: 8px;
+  height: 8px;
+  background-color: gray;
+  border-radius: 50%;
+  transition: transform 0.2s ease, background-color 0.2s ease;
+  pointer-events: auto;
+  z-index: 2;
+}
+
+.connector:hover {
+  transform: scale(1.6);
+  background-color: #4caf50;
+}
+
+
+/* === SVG LAYER FOR CONNECTION LINES === */
+.grid-wrapper {
+  position: relative;
+  width: 480px;  /* 6 columns × 80px */
+  height: 480px; /* 6 rows × 80px */
+  margin: auto;
+}
+
+.connection-layer {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 480px;
+  height: 480px;
+  pointer-events: none;
+  z-index: 0;
+}
+
+
+
+/* === FLOATING NODE WHILE MOVING === */
+.floating-node {
+  position: fixed;
+  width: 60px;
+  height: 60px;
+  background-color: #646cff;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-weight: bold;
+  pointer-events: none;
+  z-index: 1000;
 }
