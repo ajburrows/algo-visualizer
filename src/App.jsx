@@ -121,8 +121,27 @@ function App(){
             const toNode = nodes.find((n) => n.ID === conn.to.nodeID)
             if (!fromNode || !toNode) return null
 
-            const fromPos = getConnectorCenter(fromNode, conn.from.pos)
-            const toPos = getConnectorCenter(toNode, conn.to.pos)
+            const svg = document.querySelector('.connection-layer')
+            const svgRect = svg.getBoundingClientRect()
+            
+            const getLivePosition = (pos) => {
+              return {
+                x: (mousePos.x - svgRect.left),
+                y: (mousePos.y - svgRect.top)
+              }
+            }
+            
+            const isMovingFrom = selectedNodeID === fromNode.ID
+            const isMovingTo = selectedNodeID === toNode.ID
+            
+            const fromPos = isMovingFrom && mousePos
+              ? getConnectorCenter({ x: (mousePos.x - svgRect.left - 30) / 80, y: (mousePos.y - svgRect.top - 30) / 80 }, conn.from.pos)
+              : getConnectorCenter(fromNode, conn.from.pos)
+            
+            const toPos = isMovingTo && mousePos
+              ? getConnectorCenter({ x: (mousePos.x - svgRect.left - 30) / 80, y: (mousePos.y - svgRect.top - 30) / 80 }, conn.to.pos)
+              : getConnectorCenter(toNode, conn.to.pos)
+            
 
             return (
               <line
