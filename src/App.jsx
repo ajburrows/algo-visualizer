@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useRef } from 'react'
 import './App.css'
 
 const GRID_SIZE = 6
@@ -9,22 +9,31 @@ function App(){
   const [mousePos, setMousePos] = useState(null)
   const [connections, setConnections] = useState([])
   const [startConnector, setStartConnector] = useState(null)
+
+  const startConnectorCleanup = useRef(null)
+
+  useEffect(() => {
+    const handleMouseMove = (e) => {
+      // Position nodes relative to the viewport
+      setMousePos({ x: e.clientX, y: e.clientY });
+    };
+  
+    if (selectedNodeID !== null) {
+      window.addEventListener('mousemove', handleMouseMove);
+    }
+  
+    return () => {
+      window.removeEventListener('mousemove', handleMouseMove);
+    };
+  }, [selectedNodeID]);
   
 
-  const handleDrop = (x, y) => {
-    setNodes((prevNodes) =>
-      prevNodes.map((node) =>
-        node.ID === draggedNodeID ? { ...node, x, y } : node
-      )
-    )
-    setDraggedNodeID(null)
-  }
+
 
   const addNode = () => {
     const newID = nodes.length + 1
     setNodes([...nodes, { ID: newID, x: 0, y: 0}])
   }
-
 
   const getConnectorCenter = (node, pos) => {
     const baseX = node.x * 80 + 40 // center of grid cell
@@ -40,9 +49,26 @@ function App(){
     }
   }
   
-  
   const handleConnectorClick = (node, pos) => {
     if (!startConnector) {
+      const handleMouseMove = (e) => {
+        const svg = document.querySelector('.connection-layer')
+        const rect = svg.getBoundingClientRect()
+      
+        setMousePos({
+          x: e.clientX - rect.left,
+          y: e.clientY - rect.top
+        })
+      }
+      
+  
+      window.addEventListener('mousemove', handleMouseMove)
+  
+      startConnectorCleanup.current = () => {
+        window.removeEventListener('mousemove', handleMouseMove)
+        setMousePos(null)
+      }
+  
       setStartConnector({ nodeID: node.ID, pos })
     } else {
       setConnections((prev) => [
@@ -52,27 +78,15 @@ function App(){
           to: { nodeID: node.ID, pos },
         },
       ])
+  
+      if (startConnectorCleanup.current) {
+        startConnectorCleanup.current()
+      }
+  
       setStartConnector(null)
     }
   }
   
-
-  useEffect(() => {
-    const handleMouseMove = (e) => {
-      setMousePos({ x: e.clientX, y: e.clientY })
-    }
-
-    if (selectedNodeID !== null) {
-      window.addEventListener('mousemove', handleMouseMove)
-    }
-
-    return () => {
-      window.removeEventListener('mousemove', handleMouseMove)
-    }
-  }, [selectedNodeID])
-
-
-
   return (
     <div>
       <h1>Node Grid</h1>
@@ -95,9 +109,8 @@ function App(){
             fontWeight: 'bold',
             pointerEvents: 'none',
             zIndex: 1000,
-          }}
-        >
-          {selectedNodeID}
+          }}>
+            {selectedNodeID}
         </div>
       )}
 
@@ -123,6 +136,24 @@ function App(){
               />
             )
           })}
+
+          {startConnector && mousePos && (() => {
+            const fromNode = nodes.find(n => n.ID === startConnector.nodeID)
+            if (!fromNode) return null
+            const fromPos = getConnectorCenter(fromNode, startConnector.pos)
+
+            return (
+              <line
+                x1={fromPos.x}
+                y1={fromPos.y}
+                x2={mousePos.x}
+                y2={mousePos.y}
+                stroke="gray"
+                strokeWidth="1"
+                strokeDasharray="4"
+              />
+            )
+          })()}
         </svg>
 
         <div className='grid'>
@@ -152,7 +183,9 @@ function App(){
                       className={`node ${selectedNodeID === node.ID ? 'hidden' : ''}`}
                       onClick={(e) => {
                         e.stopPropagation()
-                        setSelectedNodeID(node.ID)
+                        if (selectedNodeID === null) {
+                          setSelectedNodeID(node.ID)
+                        }
                       }}
                       
                     >
