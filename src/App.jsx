@@ -44,7 +44,7 @@ function App(){
 
   // Create a new node and append it to the current nodes array (which is a state)
   const addNode = () => {
-    const newID = nodes.length + 1 // this will break when nodes are deleted (assuming it's not the most recently created node)
+    const newID = nodes.reduce((max,n) => Math.max(max, n.ID), 0) + 1 // Generate node's ID
     setNodes([...nodes, { ID: newID, x: 0, y: 0}])
   }
 
@@ -176,13 +176,6 @@ function App(){
 
             const svgRect = svgRef.current?.getBoundingClientRect()
             if (!svgRect) return null
-            
-            const getLivePosition = (pos) => {
-              return {
-                x: (mousePos.x - svgRect.left),
-                y: (mousePos.y - svgRect.top)
-              }
-            }
             
             // Determine whether the From node is moving or the To node
             const isMovingFrom = selectedNodeID === fromNode.ID
