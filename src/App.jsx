@@ -11,6 +11,7 @@ import Connections from './components/Connections.jsx'
 import Grid from './components/Grid.jsx'
 import FloatingNode from './components/FloatingNode.jsx'
 import { GRID_SIZE, NODE_RADIUS } from './constants.js'
+import { useDragTracker } from './hooks/useDragTracker.js'
 
 function App(){
     const [nodes, setNodes] = useState([{ ID: 1, x: 0, y: 0}])
@@ -18,25 +19,12 @@ function App(){
     const [mousePos, setMousePos] = useState(null)
     const [connections, setConnections] = useState([])
     const [startConnector, setStartConnector] = useState(null)
-    const [hasMoved, setHasMoved] = useState(false)
+    const [isMoving, setIsMoving] = useState(false)
 
     const startConnectorCleanup = useRef(null)
     const svgRef = useRef(null)
 
-    useEffect(() => {
-        const handleMouseMove = (e) => {
-            setMousePos({ x: e.clientX, y: e.clientY });
-            setHasMoved(true);
-        };
-    
-        if (selectedNodeID !== null) {
-            window.addEventListener('mousemove', handleMouseMove);
-        }
-    
-        return () => {
-            window.removeEventListener('mousemove', handleMouseMove);
-        };
-    }, [selectedNodeID]);
+    useDragTracker(selectedNodeID, setMousePos, setIsMoving)
 
     const addNode = () => {
         const newID = nodes.reduce((max,n) => Math.max(max, n.ID), 0) + 1
@@ -85,7 +73,7 @@ function App(){
             <h1>Node Grid</h1>
             <button onClick={addNode}>Add Node</button>
 
-            {selectedNodeID !== null && mousePos && hasMoved && (() => {
+            {selectedNodeID !== null && mousePos && isMoving && (() => {
                 return (
                     <FloatingNode
                         NODE_RADIUS={NODE_RADIUS}
@@ -114,9 +102,9 @@ function App(){
                     selectedNodeID={selectedNodeID}
                     setSelectedNodeID={setSelectedNodeID}
                     setMousePos={setMousePos}
-                    setHasMoved={setHasMoved}
+                    setIsMoving={setIsMoving}
                     handleConnectorClick={handleConnectorClick}
-                    hasMoved={hasMoved}
+                    isMoving={isMoving}
                     mousePos={mousePos}
                 />
             </div>
