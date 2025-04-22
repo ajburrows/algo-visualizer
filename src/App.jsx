@@ -133,6 +133,7 @@ function App(){
                     startConnector={startConnector}
                     setStartConnector={setStartConnector}
                     hasMoved={hasMoved}
+                    mousePos={mousePos}
                 />
             </div>
         </div>

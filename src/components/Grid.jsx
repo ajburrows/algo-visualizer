@@ -14,7 +14,8 @@ export default function Grid({
     handleConnectorClick,
     hasMoved,
     startConnector,
-    setStartConnector
+    setStartConnector,
+    mousePos
 }) {
     return (
         <div className='grid'>
@@ -52,7 +53,7 @@ export default function Grid({
                                 isSelected={selectedNodeID === node.ID}
                                 isHidden={selectedNodeID === node.ID && hasMoved}
                                 onClick={(e) => {
-                                    if (selectedNodeID === null) {
+                                    if (selectedNodeID === null && mousePos === null) {
                                         e.stopPropagation()
                                         setSelectedNodeID(node.ID)
                                     }
