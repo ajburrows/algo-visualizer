@@ -7,7 +7,8 @@ Object dimensions
 import { useEffect, useState, useRef } from 'react'
 import './App.css'
 import Node from './components/Node.jsx'
-import Connections from './components/Connector.jsx'
+import Connections from './components/Connections.jsx'
+import Grid from './components/Grid.jsx'
 
 const GRID_SIZE = 6
 const GRID_CELL_LENGTH = 80
@@ -42,20 +43,6 @@ function App(){
     const addNode = () => {
         const newID = nodes.reduce((max,n) => Math.max(max, n.ID), 0) + 1
         setNodes([...nodes, { ID: newID, x: 0, y: 0}])
-    }
-
-    const getConnectorCenter = (node, pos) => {
-        const baseX = node.x * GRID_CELL_LENGTH + (GRID_CELL_LENGTH / 2)
-        const baseY = node.y * GRID_CELL_LENGTH + (GRID_CELL_LENGTH / 2)
-        const offset = NODE_RADIUS
-    
-        switch (pos) {
-            case 'top': return { x: baseX, y: baseY - offset }
-            case 'right': return { x: baseX + offset, y: baseY }
-            case 'bottom': return { x: baseX, y: baseY + offset }
-            case 'left': return { x: baseX - offset, y: baseY }
-            default: return { x: baseX, y: baseY }
-        }
     }
 
     const handleConnectorClick = (node, pos) => {
@@ -134,53 +121,19 @@ function App(){
                     />
                 </svg>
 
-                <div className='grid'>
-                    {Array.from({ length: GRID_SIZE * GRID_SIZE}, (_, index) => {
-                        const x = index % GRID_SIZE
-                        const y = Math.floor(index / GRID_SIZE)
-                        const node = nodes.find((n) => n.x === x && n.y === y)
-                        return (
-                            <div
-                                key={index}
-                                className="grid-cell"
-                                onClick={() => {
-                                    if (selectedNodeID !== null){
-                                        const selectedNode = nodes.find(n => n.ID === selectedNodeID)
-
-                                        if (selectedNode.x !== x || selectedNode.y !== y){
-                                            setNodes((prevNodes) =>
-                                                prevNodes.map((node) =>
-                                                    node.ID === selectedNodeID ? { ...node, x, y } : node
-                                                )
-                                            )
-                                        }
-
-                                        setSelectedNodeID(null)
-                                        setMousePos(null)
-                                        setHasMoved(null)
-                                    }
-                                }}
-                            >
-                                <div className="grid-dot"></div>
-
-                                {node && (
-                                    <Node
-                                        ID={node.ID}
-                                        isSelected={selectedNodeID === node.ID}
-                                        isHidden={selectedNodeID === node.ID && hasMoved}
-                                        onClick={(e) => {
-                                            if (selectedNodeID === null) {
-                                                e.stopPropagation()
-                                                setSelectedNodeID(node.ID)
-                                            }
-                                        }}
-                                        onConnectorClick={(pos) => handleConnectorClick(node, pos)}
-                                    />
-                                )}
-                            </div>
-                        )
-                    })}
-                </div>
+                <Grid
+                    GRID_SIZE={6}
+                    nodes={nodes}
+                    setNodes={setNodes}
+                    selectedNodeID={selectedNodeID}
+                    setSelectedNodeID={setSelectedNodeID}
+                    setMousePos={setMousePos}
+                    setHasMoved={setHasMoved}
+                    handleConnectorClick={handleConnectorClick}
+                    startConnector={startConnector}
+                    setStartConnector={setStartConnector}
+                    hasMoved={hasMoved}
+                />
             </div>
         </div>
     )
