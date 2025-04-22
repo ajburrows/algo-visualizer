@@ -9,6 +9,7 @@ import './App.css'
 import Node from './components/Node.jsx'
 import Connections from './components/Connections.jsx'
 import Grid from './components/Grid.jsx'
+import FloatingNode from './components/FloatingNode.jsx'
 
 const GRID_SIZE = 6
 const GRID_CELL_LENGTH = 80
@@ -89,23 +90,11 @@ function App(){
 
             {selectedNodeID !== null && mousePos && hasMoved && (() => {
                 return (
-                    <div
-                        style={{
-                            position: 'fixed',
-                            left: mousePos.x - NODE_RADIUS,
-                            top: mousePos.y - NODE_RADIUS,
-                            pointerEvents: 'none',
-                            zIndex: 1000,
-                        }}
-                    >
-                        <Node
-                            ID={selectedNodeID}
-                            isSelected={true}
-                            isHidden={false}
-                            onClick={() => {}}
-                            onConnectorClick={() => {}}
-                        />
-                    </div>
+                    <FloatingNode
+                        NODE_RADIUS="30"
+                        mousePos={mousePos}
+                        selectedNodeID={selectedNodeID}
+                    />
                 );
             })()}
 
@@ -130,8 +119,6 @@ function App(){
                     setMousePos={setMousePos}
                     setHasMoved={setHasMoved}
                     handleConnectorClick={handleConnectorClick}
-                    startConnector={startConnector}
-                    setStartConnector={setStartConnector}
                     hasMoved={hasMoved}
                     mousePos={mousePos}
                 />

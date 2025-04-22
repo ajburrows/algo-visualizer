@@ -13,8 +13,6 @@ export default function Grid({
     setHasMoved,
     handleConnectorClick,
     hasMoved,
-    startConnector,
-    setStartConnector,
     mousePos
 }) {
     return (
