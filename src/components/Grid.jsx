@@ -1,10 +1,8 @@
 import React from 'react'
 import Node from './Node'
-
-
+import { GRID_SIZE } from '../constants'
 
 export default function Grid({
-    GRID_SIZE,
     nodes,
     setNodes,
     selectedNodeID,
@@ -15,12 +13,19 @@ export default function Grid({
     isMoving,
     mousePos
 }) {
+    const moveNode = (id, x, y) =>
+        setNodes((nodes) =>
+            nodes.map((node) =>
+                node.ID === id ? { ...node, x, y } : node
+            )
+        )
+
     return (
         <div className='grid'>
             {Array.from({ length: GRID_SIZE * GRID_SIZE}, (_, index) => {
-                const x = index % GRID_SIZE
-                const y = Math.floor(index / GRID_SIZE)
-                const node = nodes.find((n) => n.x === x && n.y === y)
+                const cell_x = index % GRID_SIZE
+                const cell_y = Math.floor(index / GRID_SIZE)
+                const node = nodes.find((node) => node.x === cell_x && node.y === cell_y)
                 return (
                     <div
                         key={index}
@@ -29,12 +34,8 @@ export default function Grid({
                             if (selectedNodeID !== null){
                                 const selectedNode = nodes.find(n => n.ID === selectedNodeID)
 
-                                if (selectedNode.x !== x || selectedNode.y !== y){
-                                    setNodes((prevNodes) =>
-                                        prevNodes.map((node) =>
-                                            node.ID === selectedNodeID ? { ...node, x, y } : node
-                                        )
-                                    )
+                                if (selectedNode.x !== cell_x || selectedNode.y !== cell_y){
+                                    moveNode(selectedNodeID, cell_x, cell_y)
                                 }
 
                                 setSelectedNodeID(null)

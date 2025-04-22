@@ -6,11 +6,9 @@ Object dimensions
 
 import { useEffect, useState, useRef } from 'react'
 import './App.css'
-import Node from './components/Node.jsx'
 import Connections from './components/Connections.jsx'
 import Grid from './components/Grid.jsx'
 import FloatingNode from './components/FloatingNode.jsx'
-import { GRID_SIZE, NODE_RADIUS } from './constants.js'
 import { useDragTracker } from './hooks/useDragTracker.js'
 
 function App(){
@@ -73,10 +71,10 @@ function App(){
             <h1>Node Grid</h1>
             <button onClick={addNode}>Add Node</button>
 
+            {/* Render a fictitious floating node after picking a node up */}
             {selectedNodeID !== null && mousePos && isMoving && (() => {
                 return (
                     <FloatingNode
-                        NODE_RADIUS={NODE_RADIUS}
                         mousePos={mousePos}
                         selectedNodeID={selectedNodeID}
                     />
@@ -84,6 +82,7 @@ function App(){
             })()}
 
             <div className='grid-wrapper'>
+                {/* Draw connetion lines and temp line here */}
                 <svg className="connection-layer" ref={svgRef}>
                     <Connections
                         nodes={nodes}
@@ -95,8 +94,8 @@ function App(){
                     />
                 </svg>
 
+                {/* Store all grid cells and nodes here */}
                 <Grid
-                    GRID_SIZE={GRID_SIZE}
                     nodes={nodes}
                     setNodes={setNodes}
                     selectedNodeID={selectedNodeID}

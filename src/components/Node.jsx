@@ -1,4 +1,5 @@
 import React from 'react'
+import clsx from 'clsx'
 
 const Node = ({
     ID,
@@ -9,7 +10,10 @@ const Node = ({
 }) => {
     return (
         <div
-            className={`node ${isSelected ? 'selected' : ''} ${isHidden ? 'hidden' : ''}`}
+            className={clsx('node', {
+                selected: isSelected,
+                hidden: isHidden
+            })}
             onClick={onClick}
         >
             {ID}

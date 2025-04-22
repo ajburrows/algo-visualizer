@@ -1,11 +1,13 @@
 import React from 'react'
 import Node from './Node'
+import { NODE_RADIUS } from '../constants'
 
 export default function FloatingNode({
-    NODE_RADIUS,
     mousePos,
     selectedNodeID
 }) {
+    if (!mousePos || selectedNodeID === null) return null
+    
     return (
         <div
             style={{
