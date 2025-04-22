@@ -10,10 +10,7 @@ import Node from './components/Node.jsx'
 import Connections from './components/Connections.jsx'
 import Grid from './components/Grid.jsx'
 import FloatingNode from './components/FloatingNode.jsx'
-
-const GRID_SIZE = 6
-const GRID_CELL_LENGTH = 80
-const NODE_RADIUS = 30
+import { GRID_SIZE, NODE_RADIUS } from './constants.js'
 
 function App(){
     const [nodes, setNodes] = useState([{ ID: 1, x: 0, y: 0}])
@@ -91,7 +88,7 @@ function App(){
             {selectedNodeID !== null && mousePos && hasMoved && (() => {
                 return (
                     <FloatingNode
-                        NODE_RADIUS="30"
+                        NODE_RADIUS={NODE_RADIUS}
                         mousePos={mousePos}
                         selectedNodeID={selectedNodeID}
                     />
@@ -111,7 +108,7 @@ function App(){
                 </svg>
 
                 <Grid
-                    GRID_SIZE={6}
+                    GRID_SIZE={GRID_SIZE}
                     nodes={nodes}
                     setNodes={setNodes}
                     selectedNodeID={selectedNodeID}
