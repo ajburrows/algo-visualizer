@@ -1,4 +1,5 @@
 import React from 'react'
+import clsx from 'clsx'
 
 const GRID_CELL_LENGTH = 80
 const NODE_RADIUS = 30
@@ -31,7 +32,9 @@ export default function Connections({
     selectedNodeID,
     mousePos,
     startConnector,
-    svgRef
+    svgRef,
+    selectedConnection,
+    setSelectedConnection
 }) {
     const svgRect = svgRef.current?.getBoundingClientRect()
     if (!svgRect) return null
@@ -58,16 +61,38 @@ export default function Connections({
                     ? getConnectorCenter(getMousePosInSVG(mousePos, svgRect), conn.to.pos)
                     : getConnectorCenter(toNode, conn.to.pos)
 
+                const isSelected = selectedConnection === index
+
                 return (
-                    <line
-                        key={index}
-                        x1={fromPos.x}
-                        y1={fromPos.y}
-                        x2={toPos.x}
-                        y2={toPos.y}
-                        stroke="black"
-                        strokeWidth="2"
-                    />
+                    <g key={index}
+                        zIndex='5'>
+                        <line 
+                            className='connection-hitbox'
+                            x1={fromPos.x}
+                            y1={fromPos.y}
+                            x2={toPos.x}
+                            y2={toPos.y}
+                            onClick={(e) => {
+                                setSelectedConnection( isSelected ? null : index )
+                            }}
+                            stroke='transparent'
+                            strokeWidth='12'
+                            pointerEvents='stroke'
+                            cursor='pointer'
+                        />
+                        <line
+                            className={clsx('connection', {
+                                            selected: isSelected
+                                        })}
+                            pointerEvents="none"
+                            x1={fromPos.x}
+                            y1={fromPos.y}
+                            x2={toPos.x}
+                            y2={toPos.y}
+                            stroke={ isSelected ? 'blue' : 'black'}
+                            strokeWidth={ isSelected ? '3' : '2' }
+                        />
+                    </g>
                 )
             })}
 
@@ -76,6 +101,7 @@ export default function Connections({
                 const fromNode = nodes.find(n => n.ID === startConnector.nodeID)
                 if (!fromNode) return null
                 const fromPos = getConnectorCenter(fromNode, startConnector.pos)
+
 
                 return (
                     <line

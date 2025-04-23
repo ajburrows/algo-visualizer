@@ -18,6 +18,7 @@ function App(){
     const [connections, setConnections] = useState([])
     const [startConnector, setStartConnector] = useState(null)
     const [isMoving, setIsMoving] = useState(false)
+    const [selectedConnection, setSelectedConnection] = useState(null)
 
     const startConnectorCleanup = useRef(null)
     const svgRef = useRef(null)
@@ -91,6 +92,8 @@ function App(){
                         mousePos={mousePos}
                         startConnector={startConnector}
                         svgRef={svgRef}
+                        selectedConnection={selectedConnection}
+                        setSelectedConnection={setSelectedConnection}
                     />
                 </svg>
 
