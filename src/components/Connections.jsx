@@ -64,8 +64,7 @@ export default function Connections({
                 const isSelected = selectedConnection === index
 
                 return (
-                    <g key={index}
-                        zIndex='5'>
+                    <g key={index}>
                         <line 
                             className='connection-hitbox'
                             x1={fromPos.x}

@@ -9,7 +9,8 @@ import './App.css'
 import Connections from './components/Connections.jsx'
 import Grid from './components/Grid.jsx'
 import FloatingNode from './components/FloatingNode.jsx'
-import { useDragTracker } from './hooks/useDragTracker.js'
+import useDragTracker from './hooks/useDragTracker.js'
+import useDeleteConnection from './hooks/useDeleteConnection.js'
 
 function App(){
     const [nodes, setNodes] = useState([{ ID: 1, x: 0, y: 0}])
@@ -24,6 +25,7 @@ function App(){
     const svgRef = useRef(null)
 
     useDragTracker(selectedNodeID, setMousePos, setIsMoving)
+    useDeleteConnection(selectedConnection, setSelectedConnection, setConnections)
 
     const addNode = () => {
         const newID = nodes.reduce((max,n) => Math.max(max, n.ID), 0) + 1
