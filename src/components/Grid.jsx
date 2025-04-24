@@ -11,7 +11,8 @@ export default function Grid({
     setIsMoving,
     handleConnectorClick,
     isMoving,
-    mousePos
+    mousePos,
+    editingConnector
 }) {
     const moveNode = (id, x, y) =>
         setNodes((nodes) =>
@@ -58,6 +59,7 @@ export default function Grid({
                                     }
                                 }}
                                 onConnectorClick={(pos) => handleConnectorClick(node, pos)}
+                                editingConnector={editingConnector}
                             />
                         )}
                     </div>

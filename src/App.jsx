@@ -11,18 +11,21 @@ import Grid from './components/Grid.jsx'
 import FloatingNode from './components/FloatingNode.jsx'
 import useDragTracker from './hooks/useDragTracker.js'
 import useDeleteConnection from './hooks/useDeleteConnection.js'
+import getConnectorCenter from './utils/getConnectorCenter.js'
 
 function App(){
-    const [nodes, setNodes] = useState([{ ID: 1, x: 0, y: 0}])
-    const [selectedNodeID, setSelectedNodeID] = useState(null)
-    const [mousePos, setMousePos] = useState(null)
-    const [connections, setConnections] = useState([])
-    const [startConnector, setStartConnector] = useState(null)
-    const [isMoving, setIsMoving] = useState(false)
-    const [selectedConnection, setSelectedConnection] = useState(null)
+    const [nodes, setNodes] = useState([{ ID: 1, x: 0, y: 0}]) // all nodes on the grid
+    const [selectedNodeID, setSelectedNodeID] = useState(null) // integer
+    const [mousePos, setMousePos] = useState(null) // { x, y }
+    const [connections, setConnections] = useState([]) // [{ from: {nodeID, pos}, to: {nodeID, pos} }, ...]
+    const [startConnector, setStartConnector] = useState(null) // First connector clicked in a connection
+    const [isMoving, setIsMoving] = useState(false) // True | False if a node is being moved
+    const [selectedConnection, setSelectedConnection] = useState(null) // index of connections state
+    const [editingConnector, setEditingConnector] = useState(null) // { index, end ('toNode' or 'fromNode'), nodeID, pos }
 
     const startConnectorCleanup = useRef(null)
-    const svgRef = useRef(null)
+    const editingConnectorCleanup = useRef(null)
+    const svgRef = useRef(null) // rectangle over the grid where connections are drawn
 
     useDragTracker(selectedNodeID, setMousePos, setIsMoving)
     useDeleteConnection(selectedConnection, setSelectedConnection, setConnections)
@@ -32,18 +35,71 @@ function App(){
         setNodes([...nodes, { ID: newID, x: 0, y: 0}])
     }
 
+    const handleMouseMove = (e) => {
+        const svg = document.querySelector('.connection-layer')
+        const rect = svg.getBoundingClientRect()
+      
+        setMousePos({
+            x: e.clientX - rect.left,
+            y: e.clientY - rect.top,
+        })
+    }
+
     const handleConnectorClick = (node, pos) => {
-        if (startConnector === null) {
-            const handleMouseMove = (e) => {
-                const svg = document.querySelector('.connection-layer')
-                const rect = svg.getBoundingClientRect()
+        if (selectedConnection !== null && editingConnector === null){
+            // Edit connection
+            window.addEventListener('mousemove', handleMouseMove)
             
-                setMousePos({
-                    x: e.clientX - rect.left,
-                    y: e.clientY - rect.top
-                })
+            // Track the mouse
+            editingConnectorCleanup.current = () => {
+                window.removeEventListener('mousemove', handleMouseMove)
+                setMousePos(null)
             }
-        
+
+            const connection = connections[selectedConnection]
+            const isFrom = connection.from.nodeID === node.ID
+            const endClicked = isFrom ? 'fromNode' : 'toNode'
+            console.log(`conn.nodeID: ${connection.from.nodeID}, node.nodeID: ${node.nodeID}`)
+            setEditingConnector({
+                index: selectedConnection,
+                endClicked:  endClicked,
+                nodeID: node.ID,
+                pos: pos
+            })
+
+            // Remove the connection being edited
+        }
+        else if (selectedConnection !== null && editingConnector !== null) {
+            setConnections((prev) =>
+              prev.map((conn, index) => {
+                if (index !== editingConnector.index) return conn
+                console.log(`endClicked: ${editingConnector.endClicked}`)
+                if (editingConnector.endClicked === 'toNode'){
+                    console.log('toNode clicked')
+                    return {
+                        ...conn,
+                        to: { nodeID: node.ID, pos}
+                    }
+                } else {
+                    console.log('fromNode clicked')
+                    return {
+                        ...conn,
+                        from: {nodeID: node.ID, pos}
+                      }
+                }
+              })
+            )
+          
+            // Stop tracking mouse
+            if (editingConnectorCleanup.current) {
+              editingConnectorCleanup.current()
+            }
+          
+            setEditingConnector(null)
+            setSelectedConnection(null)
+            return
+        }          
+        else if (startConnector === null) {        
             window.addEventListener('mousemove', handleMouseMove)
 
             startConnectorCleanup.current = () => {
@@ -96,6 +152,7 @@ function App(){
                         svgRef={svgRef}
                         selectedConnection={selectedConnection}
                         setSelectedConnection={setSelectedConnection}
+                        editingConnector={editingConnector}
                     />
                 </svg>
 
@@ -110,6 +167,7 @@ function App(){
                     handleConnectorClick={handleConnectorClick}
                     isMoving={isMoving}
                     mousePos={mousePos}
+                    editingConnector={editingConnector}
                 />
             </div>
         </div>

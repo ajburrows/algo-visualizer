@@ -34,7 +34,8 @@ export default function Connections({
     startConnector,
     svgRef,
     selectedConnection,
-    setSelectedConnection
+    setSelectedConnection,
+    editingConnector
 }) {
     const svgRect = svgRef.current?.getBoundingClientRect()
     if (!svgRect) return null
@@ -45,6 +46,10 @@ export default function Connections({
         <>
             {/* Draw a solid line for all existing connections */}
             {connections.map((conn, index) => {
+                if (index === selectedConnection && editingConnector !== null){
+                    return null
+                }
+
                 const fromNode = findNode(conn.from.nodeID)
                 const toNode = findNode(conn.to.nodeID)
                 if (!fromNode || !toNode) return null
@@ -114,6 +119,26 @@ export default function Connections({
                     />
                 )
             })()}
+
+            {/* Edit Connections */}
+            {editingConnector && mousePos && (() => {
+                const conn = connections[editingConnector.index]
+                const stationaryConnector = editingConnector.end === 'fromNode' ? conn.to : conn.from
+                const stationaryNode = nodes.find(n => n.ID === stationaryConnector.nodeID)
+                const stationaryPos = getConnectorCenter(stationaryNode, stationaryConnector.pos)
+
+                return (
+                    <line
+                        x1={stationaryPos.x}
+                        y1={stationaryPos.y}
+                        x2={mousePos.x}
+                        y2={mousePos.y}
+                        stroke="black"
+                        strokeWidth="2"
+                    />
+                )
+            })()}
+
         </>
     )
 }
