@@ -1,23 +1,7 @@
 import React from 'react'
 import clsx from 'clsx'
-
-const GRID_CELL_LENGTH = 80
-const NODE_RADIUS = 30
-
-// Get coord of a connector on a node relative to the SVG
-function getConnectorCenter(node, pos) {
-    const baseX = node.x * GRID_CELL_LENGTH + (GRID_CELL_LENGTH / 2)
-    const baseY = node.y * GRID_CELL_LENGTH + (GRID_CELL_LENGTH / 2)
-    const offset = NODE_RADIUS
-
-    switch (pos) {
-        case 'top': return { x: baseX, y: baseY - offset }
-        case 'right': return { x: baseX + offset, y: baseY }
-        case 'bottom': return { x: baseX, y: baseY + offset }
-        case 'left': return  { x: baseX - offset, y: baseY }
-        default: return { x: baseX, y: baseY }
-    }
-}
+import getConnectorCenter from '../utils/getConnectorCenter'
+import { GRID_CELL_LENGTH, NODE_RADIUS } from '../constants'
 
 // Calculate mouse positiion relative to the SVG
 function getMousePosInSVG(mousePos, svgRect){
@@ -54,7 +38,7 @@ export default function Connections({
                 const toNode = findNode(conn.to.nodeID)
                 if (!fromNode || !toNode) return null
 
-                {/* Determine if the from node or to node was picked up */}
+                {/* Determine if the From node or the To node was picked up */}
                 const isMovingFrom = selectedNodeID === fromNode.ID
                 const isMovingTo = selectedNodeID === toNode.ID
 
@@ -105,7 +89,6 @@ export default function Connections({
                 const fromNode = nodes.find(n => n.ID === startConnector.nodeID)
                 if (!fromNode) return null
                 const fromPos = getConnectorCenter(fromNode, startConnector.pos)
-
 
                 return (
                     <line

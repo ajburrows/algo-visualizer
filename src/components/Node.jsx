@@ -19,6 +19,7 @@ const Node = ({
             })}
             onClick={onClick}
         >
+            {/* Render each node's ID and its connectors */}
             {ID}
             {['top', 'right', 'bottom', 'left'].map((pos) => (
                 <div

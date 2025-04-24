@@ -1,5 +1,6 @@
 import { GRID_CELL_LENGTH, NODE_RADIUS } from "../constants"
 
+// Get the x,y coords of a connector relative to the connection-layer svg
 export default function getConnectorCenter(node, pos) {
   const baseX = node.x * GRID_CELL_LENGTH + (GRID_CELL_LENGTH / 2)
   const baseY = node.y * GRID_CELL_LENGTH + (GRID_CELL_LENGTH / 2)
