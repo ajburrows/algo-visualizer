@@ -25,10 +25,17 @@ function App(){
     const [selectedConnection, setSelectedConnection] = useState(null) // index of connections state
     const [editingConnector, setEditingConnector] = useState(null) // { index, end ('toNode' or 'fromNode'), nodeID, pos }
     const [mode, setMode] = useState('edit') // 'edit' | 'algorithm'
+    const [startNodeID, setStartNodeID] = useState(null)
+    const [endNodeID, setEndNodeID] = useState(null)
+    const [targetType, setTargetType] = useState(null) // 'start' | 'end'
+    const [algorithm, setAlgorithm] = useState('DFS')
 
     const startConnectorCleanup = useRef(null)
     const editingConnectorCleanup = useRef(null)
     const svgRef = useRef(null) // rectangle over the grid where connections are drawn
+
+    console.log(`startNode: ${startNodeID}`)
+    console.log(`endNode: ${endNodeID}`)
 
     useDragTracker(selectedNodeID, setMousePos, setIsMoving)
     useDeleteConnection(selectedConnection, setSelectedConnection, setConnections)
@@ -74,6 +81,18 @@ function App(){
                 </button>
             </div>
 
+            {mode === 'algorithm' && (
+                <div className='target-type-toggle'>
+                    <button onClick={() => setTargetType('start')} disabled={ targetType === 'start' }>
+                        Set Start Node
+                    </button>
+                    <button onClick={() => setTargetType('end')} disabled={ targetType === 'end' }>
+                        Set End Node
+                    </button>
+                </div>
+            )}
+
+
             {/* Render a fictitious floating node after picking a node up */}
             {selectedNodeID !== null && mousePos && isMoving && (() => {
                 return (
@@ -113,6 +132,12 @@ function App(){
                     mousePos={mousePos}
                     editingConnector={editingConnector}
                     mode={mode}
+                    startNodeID={startNodeID}
+                    setStartNodeID={setStartNodeID}
+                    endNodeID={endNodeID}
+                    setEndNodeID={setEndNodeID}
+                    targetType={targetType}
+                    algorithm={algorithm}
                 />
             </div>
         </div>

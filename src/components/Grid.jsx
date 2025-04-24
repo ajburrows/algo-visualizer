@@ -12,7 +12,14 @@ export default function Grid({
     handleConnectorClick,
     isMoving,
     mousePos,
-    editingConnector
+    editingConnector,
+    mode,
+    startNodeID,
+    setStartNodeID,
+    endNodeID,
+    setEndNodeID,
+    targetType,
+    algorithm
 }) {
     const moveNode = (id, x, y) =>
         setNodes((nodes) =>
@@ -53,9 +60,21 @@ export default function Grid({
                                 isSelected={selectedNodeID === node.ID}
                                 isHidden={selectedNodeID === node.ID && isMoving}
                                 onClick={(e) => {
-                                    if (selectedNodeID === null && mousePos === null) {
+                                    if (mode === 'edit' && selectedNodeID === null && mousePos === null) {
                                         e.stopPropagation()
                                         setSelectedNodeID(node.ID)
+                                    }
+                                    else if (mode === 'algorithm' && targetType === 'start' && node.ID !== startNodeID ) {
+                                        setStartNodeID(node.ID)
+                                    }
+                                    else if (mode === 'algorithm' && targetType === 'start' && node.ID === startNodeID) {
+                                        setStartNodeID(null)
+                                    }
+                                    else if (mode === 'algorithm' && targetType === 'end' && node.ID !== endNodeID) {
+                                        setEndNodeID(node.ID)
+                                    }
+                                    else if (mode === 'algorithm' && targetType === 'end' && node.ID === endNodeID) {
+                                        setEndNodeID(null)
                                     }
                                 }}
                                 onConnectorClick={(pos) => handleConnectorClick(node, pos)}
