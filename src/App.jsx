@@ -4,14 +4,13 @@ Object dimensions
  - Nodes are 60px in diameter
 */
 
-import { useEffect, useState, useRef } from 'react'
+import { useState, useRef } from 'react'
 import './App.css'
 import Connections from './components/Connections.jsx'
 import Grid from './components/Grid.jsx'
 import FloatingNode from './components/FloatingNode.jsx'
 import useDragTracker from './hooks/useDragTracker.js'
 import useDeleteConnection from './hooks/useDeleteConnection.js'
-import getConnectorCenter from './utils/getConnectorCenter.js'
 import handleConnectorClickFactory from './utils/handleConnectorClickFactory.js'
 
 function App(){
