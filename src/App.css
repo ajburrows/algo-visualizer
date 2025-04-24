@@ -90,7 +90,18 @@
   z-index: 2;
 }
 
-.connector:hover {
+.connector-hitbox {
+  width: 24px;
+  height: 24px;
+  position: absolute;
+  top: -8px;
+  left: -8px;
+  pointer-events: auto;
+  background-color: transparent;
+  z-index: 1;
+}
+
+.connector.active {
   transform: scale(1.6);
   background-color: #4caf50;
 }

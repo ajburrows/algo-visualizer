@@ -1,4 +1,5 @@
 import React from 'react'
+import { useState } from 'react'
 import clsx from 'clsx'
 
 const Node = ({
@@ -8,6 +9,8 @@ const Node = ({
     onClick,
     onConnectorClick
 }) => {
+    const [hoveredPos, setHoveredPos] = useState(null)
+
     return (
         <div
             className={clsx('node', {
@@ -21,12 +24,21 @@ const Node = ({
                 <div
                     key={pos}
                     className={`connector-wrapper ${pos}`}
-                    onClick={(e) => {
-                        e.stopPropagation()
-                        onConnectorClick(pos)
-                    }}
                 >
-                    <div className="connector" />
+                    <div
+                        className='connector-hitbox'
+                        onMouseEnter={() => setHoveredPos(pos)}
+                        onMouseLeave={() => setHoveredPos(null)}
+                        onClick={(e) => {
+                            e.stopPropagation()
+                            onConnectorClick(pos)
+                        }}>
+                        
+                    </div>
+                    <div className={clsx(
+                        'connector',
+                        { active: hoveredPos === pos }
+                    )} />
                 </div>
             ))}
         </div>
