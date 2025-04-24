@@ -13,6 +13,7 @@ import useDragTracker from './hooks/useDragTracker.js'
 import useDeleteConnection from './hooks/useDeleteConnection.js'
 import handleConnectorClickFactory from './utils/handleConnectorClickFactory.js'
 import useDeleteNode from './hooks/useDeleteNode.js'
+import { runDFS } from './utils/traversals.js'
 
 function App(){
     const [nodes, setNodes] = useState([{ ID: 1, x: 0, y: 0}]) // all nodes on the grid
@@ -23,6 +24,7 @@ function App(){
     const [isMoving, setIsMoving] = useState(false) // True | False if a node is being moved
     const [selectedConnection, setSelectedConnection] = useState(null) // index of connections state
     const [editingConnector, setEditingConnector] = useState(null) // { index, end ('toNode' or 'fromNode'), nodeID, pos }
+    const [mode, setMode] = useState('edit') // 'edit' | 'algorithm'
 
     const startConnectorCleanup = useRef(null)
     const editingConnectorCleanup = useRef(null)
@@ -51,10 +53,26 @@ function App(){
         setMousePos
     })
 
+    const handleRunDFS = () => {
+        if (nodes.length > 0 && selectedNodeID !== null) {
+            runDFS(nodes, connections, selectedNodeID)
+        }
+    }
+
     return (
         <div>
             <h1>Node Grid</h1>
             <button onClick={addNode}>Add Node</button>
+            <button onClick={handleRunDFS}>Run DFS</button>
+
+            <div className='mode-toggle'>
+                <button onClick={() => setMode('edit')} disabled={ mode === 'edit' }>
+                    Edit Mode
+                </button>
+                <button onClick={() => setMode('algorithm')} disabled={ mode === 'algorithm' }>
+                    Algorithm Mode
+                </button>
+            </div>
 
             {/* Render a fictitious floating node after picking a node up */}
             {selectedNodeID !== null && mousePos && isMoving && (() => {
@@ -94,6 +112,7 @@ function App(){
                     isMoving={isMoving}
                     mousePos={mousePos}
                     editingConnector={editingConnector}
+                    mode={mode}
                 />
             </div>
         </div>
