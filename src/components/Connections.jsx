@@ -123,14 +123,14 @@ export default function Connections({
             {/* Edit Connections */}
             {editingConnector && mousePos && (() => {
                 const conn = connections[editingConnector.index]
-                const stationaryConnector = editingConnector.end === 'fromNode' ? conn.to : conn.from
+                const stationaryConnector = editingConnector.endClicked === 'fromNode' ? conn.to : conn.from
                 const stationaryNode = nodes.find(n => n.ID === stationaryConnector.nodeID)
-                const stationaryPos = getConnectorCenter(stationaryNode, stationaryConnector.pos)
+                const stationaryConnCoord = getConnectorCenter(stationaryNode, stationaryConnector.pos)
 
                 return (
                     <line
-                        x1={stationaryPos.x}
-                        y1={stationaryPos.y}
+                        x1={stationaryConnCoord.x}
+                        y1={stationaryConnCoord.y}
                         x2={mousePos.x}
                         y2={mousePos.y}
                         stroke="black"

@@ -59,7 +59,6 @@ function App(){
             const connection = connections[selectedConnection]
             const isFrom = connection.from.nodeID === node.ID
             const endClicked = isFrom ? 'fromNode' : 'toNode'
-            console.log(`conn.nodeID: ${connection.from.nodeID}, node.nodeID: ${node.nodeID}`)
             setEditingConnector({
                 index: selectedConnection,
                 endClicked:  endClicked,
@@ -73,15 +72,12 @@ function App(){
             setConnections((prev) =>
               prev.map((conn, index) => {
                 if (index !== editingConnector.index) return conn
-                console.log(`endClicked: ${editingConnector.endClicked}`)
                 if (editingConnector.endClicked === 'toNode'){
-                    console.log('toNode clicked')
                     return {
                         ...conn,
                         to: { nodeID: node.ID, pos}
                     }
                 } else {
-                    console.log('fromNode clicked')
                     return {
                         ...conn,
                         from: {nodeID: node.ID, pos}
