@@ -12,6 +12,7 @@ import FloatingNode from './components/FloatingNode.jsx'
 import useDragTracker from './hooks/useDragTracker.js'
 import useDeleteConnection from './hooks/useDeleteConnection.js'
 import handleConnectorClickFactory from './utils/handleConnectorClickFactory.js'
+import useDeleteNode from './hooks/useDeleteNode.js'
 
 function App(){
     const [nodes, setNodes] = useState([{ ID: 1, x: 0, y: 0}]) // all nodes on the grid
@@ -29,6 +30,7 @@ function App(){
 
     useDragTracker(selectedNodeID, setMousePos, setIsMoving)
     useDeleteConnection(selectedConnection, setSelectedConnection, setConnections)
+    useDeleteNode(selectedNodeID, setSelectedNodeID, setNodes, setConnections)
 
     const addNode = () => {
         const newID = nodes.reduce((max,n) => Math.max(max, n.ID), 0) + 1
