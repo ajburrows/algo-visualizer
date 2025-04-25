@@ -12,7 +12,8 @@ function getAdjacencyList(nodes, connections){
     return adjList
 }
 
-export function runDFS(nodes, connections, startingNodeID) {
+// BUG: DFS does not traverse to its neighbor with the min node id.
+function runDFS(nodes, connections, startingNodeID) {
     // Make adjacency list
     const adjList = getAdjacencyList(nodes, connections)
 
@@ -34,4 +35,20 @@ export function runDFS(nodes, connections, startingNodeID) {
 
     console.log('DFS traversal: ', result)
     return result
+}
+
+export default function runAlgorithm({
+    algorithm,
+    nodes,
+    connections,
+    startID,
+    endID
+}) {
+    switch (algorithm) {
+        case 'DFS':
+            return runDFS(nodes, connections, startID, endID)
+        default:
+            console.warn(`Algorithm "${algorithm}" is not defined.`)
+            return []
+    }
 }

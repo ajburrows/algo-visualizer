@@ -13,7 +13,7 @@ import useDragTracker from './hooks/useDragTracker.js'
 import useDeleteConnection from './hooks/useDeleteConnection.js'
 import handleConnectorClickFactory from './utils/handleConnectorClickFactory.js'
 import useDeleteNode from './hooks/useDeleteNode.js'
-import { runDFS } from './utils/traversals.js'
+import runAlgorithm from './utils/runAlgorithm.js'
 
 function App(){
     const [nodes, setNodes] = useState([{ ID: 1, x: 0, y: 0}]) // all nodes on the grid
@@ -33,9 +33,6 @@ function App(){
     const startConnectorCleanup = useRef(null)
     const editingConnectorCleanup = useRef(null)
     const svgRef = useRef(null) // rectangle over the grid where connections are drawn
-
-    console.log(`startNode: ${startNodeID}`)
-    console.log(`endNode: ${endNodeID}`)
 
     useDragTracker(selectedNodeID, setMousePos, setIsMoving)
     useDeleteConnection(selectedConnection, setSelectedConnection, setConnections)
@@ -60,17 +57,27 @@ function App(){
         setMousePos
     })
 
-    const handleRunDFS = () => {
-        if (nodes.length > 0 && selectedNodeID !== null) {
-            runDFS(nodes, connections, selectedNodeID)
-        }
-    }
 
     return (
         <div>
             <h1>Node Grid</h1>
             <button onClick={addNode}>Add Node</button>
-            <button onClick={handleRunDFS}>Run DFS</button>
+            {mode === 'algorithm' && startNodeID && (
+                <button 
+                    onClick={() => 
+                        runAlgorithm({
+                            algorithm,
+                            nodes,
+                            connections,
+                            startID: startNodeID,
+                            endID: endNodeID
+                        })
+                    }
+                >
+                    Run {algorithm}
+                </button>
+
+            )}
 
             <div className='mode-toggle'>
                 <button onClick={() => setMode('edit')} disabled={ mode === 'edit' }>
