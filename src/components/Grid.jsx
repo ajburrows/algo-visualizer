@@ -1,6 +1,7 @@
 import React from 'react'
 import Node from './Node'
 import { GRID_SIZE } from '../constants'
+import clsx from 'clsx'
 
 export default function Grid({
     nodes,
@@ -83,6 +84,8 @@ export default function Grid({
                                 }}
                                 onConnectorClick={(pos) => handleConnectorClick(node, pos)}
                                 editingConnector={editingConnector}
+                                isStartNode={node.ID === startNodeID}
+                                isEndNode={node.ID === endNodeID}
                             />
                         )}
                     </div>

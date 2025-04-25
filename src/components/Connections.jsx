@@ -77,7 +77,7 @@ export default function Connections({
                             y1={fromPos.y}
                             x2={toPos.x}
                             y2={toPos.y}
-                            stroke={ isSelected ? 'blue' : 'black'}
+                            stroke={ isSelected ? '#64acff' : 'dimgray'}
                             strokeWidth={ isSelected ? '3' : '2' }
                         />
                     </g>
@@ -116,7 +116,7 @@ export default function Connections({
                         y1={stationaryConnCoord.y}
                         x2={mousePos.x}
                         y2={mousePos.y}
-                        stroke="black"
+                        stroke="dimgray"
                         strokeWidth="2"
                     />
                 )

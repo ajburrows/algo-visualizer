@@ -7,7 +7,9 @@ const Node = ({
     isSelected,
     isHidden,
     onClick,
-    onConnectorClick
+    onConnectorClick,
+    isStartNode,
+    isEndNode
 }) => {
     const [hoveredPos, setHoveredPos] = useState(null)
 
@@ -15,7 +17,9 @@ const Node = ({
         <div
             className={clsx('node', {
                 selected: isSelected,
-                hidden: isHidden
+                hidden: isHidden,
+                'start-node' : isStartNode,
+                'end-node' : isEndNode
             })}
             onClick={onClick}
         >

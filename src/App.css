@@ -41,11 +41,19 @@
 }
 
 .node.selected {
-  outline: 3px solid #4caf50;
+  outline: 3px solid #64acff;
 }
 
 .node.hidden {
   opacity: 0;
+}
+
+.node.start-node {
+  background-color: #4caf50;
+}
+
+.node.end-node {
+  background-color: coral;
 }
 
 
@@ -103,7 +111,7 @@
 
 .connector.active {
   transform: scale(1.6);
-  background-color: #4caf50;
+  background-color: #64acff;
 }
 
 
@@ -143,6 +151,14 @@
   z-index: 1000;
 }
 
+.floating-node.start-node {
+  background-color: #4caf50;
+}
+
+.floating-node.end-node {
+  background-color: coral;
+}
+
 
 .connection-container { 
   cursor: pointer;
@@ -151,7 +167,7 @@
 }
 
 .connection-container.selected{
-  stroke: blue;
+  stroke: #64acff;
   stroke-width: 3px;
 }
 
@@ -160,3 +176,4 @@
 .active {
   background-color: #4caf50;
 }
+

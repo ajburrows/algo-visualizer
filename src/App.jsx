@@ -113,6 +113,8 @@ function App(){
                     <FloatingNode
                         mousePos={mousePos}
                         selectedNodeID={selectedNodeID}
+                        startNodeID={startNodeID}
+                        endNodeID={endNodeID}
                     />
                 );
             })()}

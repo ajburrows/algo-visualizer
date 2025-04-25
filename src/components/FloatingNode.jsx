@@ -4,7 +4,9 @@ import { NODE_RADIUS } from '../constants'
 
 export default function FloatingNode({
     mousePos,
-    selectedNodeID
+    selectedNodeID,
+    startNodeID,
+    endNodeID
 }) {
     if (!mousePos || selectedNodeID === null) return null
     
@@ -24,6 +26,8 @@ export default function FloatingNode({
                 isHidden={false}
                 onClick={() => {}}
                 onConnectorClick={() => {}}
+                isStartNode={selectedNodeID === startNodeID}
+                isEndNode={selectedNodeID === endNodeID}
             />
         </div>
     )
