@@ -13,7 +13,6 @@ export default function Grid({
     isMoving,
     mousePos,
     editingConnector,
-    mode,
     startNodeID,
     setStartNodeID,
     endNodeID,
@@ -60,20 +59,25 @@ export default function Grid({
                                 isSelected={selectedNodeID === node.ID}
                                 isHidden={selectedNodeID === node.ID && isMoving}
                                 onClick={(e) => {
-                                    if (mode === 'edit' && selectedNodeID === null && mousePos === null) {
+                                    // Pick up node
+                                    if (selectedNodeID === null && mousePos === null && targetType === null) {
                                         e.stopPropagation()
                                         setSelectedNodeID(node.ID)
                                     }
-                                    else if (mode === 'algorithm' && targetType === 'start' && node.ID !== startNodeID ) {
+                                    // Set start node
+                                    else if (targetType === 'start' && node.ID !== startNodeID ) {
                                         setStartNodeID(node.ID)
                                     }
-                                    else if (mode === 'algorithm' && targetType === 'start' && node.ID === startNodeID) {
+                                    // Remove start node
+                                    else if (targetType === 'start' && node.ID === startNodeID) {
                                         setStartNodeID(null)
                                     }
-                                    else if (mode === 'algorithm' && targetType === 'end' && node.ID !== endNodeID) {
+                                    // Set end node
+                                    else if (targetType === 'end' && node.ID !== endNodeID) {
                                         setEndNodeID(node.ID)
                                     }
-                                    else if (mode === 'algorithm' && targetType === 'end' && node.ID === endNodeID) {
+                                    // Remove end node
+                                    else if (targetType === 'end' && node.ID === endNodeID) {
                                         setEndNodeID(null)
                                     }
                                 }}

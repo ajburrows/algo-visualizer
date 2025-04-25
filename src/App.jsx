@@ -14,6 +14,7 @@ import useDeleteConnection from './hooks/useDeleteConnection.js'
 import handleConnectorClickFactory from './utils/handleConnectorClickFactory.js'
 import useDeleteNode from './hooks/useDeleteNode.js'
 import runAlgorithm from './utils/runAlgorithm.js'
+import clsx from 'clsx'
 
 function App(){
     const [nodes, setNodes] = useState([{ ID: 1, x: 0, y: 0}]) // all nodes on the grid
@@ -24,10 +25,9 @@ function App(){
     const [isMoving, setIsMoving] = useState(false) // True | False if a node is being moved
     const [selectedConnection, setSelectedConnection] = useState(null) // index of connections state
     const [editingConnector, setEditingConnector] = useState(null) // { index, end ('toNode' or 'fromNode'), nodeID, pos }
-    const [mode, setMode] = useState('edit') // 'edit' | 'algorithm'
     const [startNodeID, setStartNodeID] = useState(null)
     const [endNodeID, setEndNodeID] = useState(null)
-    const [targetType, setTargetType] = useState(null) // 'start' | 'end'
+    const [targetType, setTargetType] = useState(null) // null | 'start' | 'end'
     const [algorithm, setAlgorithm] = useState('DFS')
 
     const startConnectorCleanup = useRef(null)
@@ -62,7 +62,7 @@ function App(){
         <div>
             <h1>Node Grid</h1>
             <button onClick={addNode}>Add Node</button>
-            {mode === 'algorithm' && startNodeID && (
+            {startNodeID && (
                 <button 
                     onClick={() => 
                         runAlgorithm({
@@ -79,25 +79,32 @@ function App(){
 
             )}
 
-            <div className='mode-toggle'>
-                <button onClick={() => setMode('edit')} disabled={ mode === 'edit' }>
-                    Edit Mode
+            <div className='target-type-toggle'>
+                <button
+                    className={clsx({'active': targetType==='start'})} 
+                    onClick={() => {
+                        if (targetType !== 'start' ){
+                            setTargetType('start')
+                        } else {
+                            setTargetType(null)
+                        }
+                    }}
+                >
+                    Set Start Node
                 </button>
-                <button onClick={() => setMode('algorithm')} disabled={ mode === 'algorithm' }>
-                    Algorithm Mode
+                <button 
+                    className={clsx({'active': targetType==='end'})}
+                    onClick={() => {
+                        if (targetType !== 'end'){
+                            setTargetType('end')
+                        } else {
+                            setTargetType(null)
+                        }
+                    }}
+                >
+                    Set End Node
                 </button>
             </div>
-
-            {mode === 'algorithm' && (
-                <div className='target-type-toggle'>
-                    <button onClick={() => setTargetType('start')} disabled={ targetType === 'start' }>
-                        Set Start Node
-                    </button>
-                    <button onClick={() => setTargetType('end')} disabled={ targetType === 'end' }>
-                        Set End Node
-                    </button>
-                </div>
-            )}
 
 
             {/* Render a fictitious floating node after picking a node up */}
@@ -138,7 +145,6 @@ function App(){
                     isMoving={isMoving}
                     mousePos={mousePos}
                     editingConnector={editingConnector}
-                    mode={mode}
                     startNodeID={startNodeID}
                     setStartNodeID={setStartNodeID}
                     endNodeID={endNodeID}

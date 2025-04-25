@@ -154,3 +154,9 @@
   stroke: blue;
   stroke-width: 3px;
 }
+
+
+/* === BUTTONS === */
+.active {
+  background-color: #4caf50;
+}
