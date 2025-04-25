@@ -13,7 +13,7 @@ function getAdjacencyList(nodes, connections){
 }
 
 // BUG: DFS does not traverse to its neighbor with the min node id.
-function runDFS(nodes, connections, startingNodeID) {
+function runDFS(nodes, connections, startingNodeID, endingNodeID) {
     // Make adjacency list
     const adjList = getAdjacencyList(nodes, connections)
 
@@ -25,6 +25,8 @@ function runDFS(nodes, connections, startingNodeID) {
         if (visited.has(nodeID)) return
         visited.add(nodeID)
         result.push(nodeID)
+
+        if (endingNodeID && endingNodeID === nodeID) return
 
         for (const neighbor of adjList[nodeID]) {
             dfs(neighbor)
