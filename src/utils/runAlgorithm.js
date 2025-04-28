@@ -19,24 +19,27 @@ function runDFS(nodes, connections, startingNodeID, endingNodeID) {
 
     // Run traversal
     const visited = new Set()
-    const result = []
+    const nodeTraversal = []
+    const edgeTraversal = []
 
-    function dfs(nodeID) {
+    function dfs(nodeID, prevNode) {
         if (visited.has(nodeID)) return
         visited.add(nodeID)
-        result.push(nodeID)
+        nodeTraversal.push(nodeID)
+        edgeTraversal.push([ prevNode, nodeID ])
 
         if (endingNodeID && endingNodeID === nodeID) return
 
         for (const neighbor of adjList[nodeID]) {
-            dfs(neighbor)
+            dfs(neighbor, nodeID)
         }
     }
 
-    dfs(startingNodeID)
+    dfs(startingNodeID, null)
 
-    console.log('DFS traversal: ', result)
-    return result
+    console.log(`nodes: ${nodeTraversal}\nedges: ${JSON.stringify(edgeTraversal)}`)
+
+    return [nodeTraversal, edgeTraversal]
 }
 
 export default function runAlgorithm({
@@ -44,7 +47,7 @@ export default function runAlgorithm({
     nodes,
     connections,
     startID,
-    endID
+    endID,
 }) {
     switch (algorithm) {
         case 'DFS':

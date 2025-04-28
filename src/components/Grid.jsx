@@ -19,7 +19,8 @@ export default function Grid({
     endNodeID,
     setEndNodeID,
     targetType,
-    algorithm
+    algorithm,
+    visitedNodes
 }) {
     const moveNode = (id, x, y) =>
         setNodes((nodes) =>
@@ -86,6 +87,7 @@ export default function Grid({
                                 editingConnector={editingConnector}
                                 isStartNode={node.ID === startNodeID}
                                 isEndNode={node.ID === endNodeID}
+                                visited={visitedNodes && visitedNodes.includes(node.ID)}
                             />
                         )}
                     </div>

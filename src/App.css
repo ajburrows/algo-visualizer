@@ -56,6 +56,10 @@
   background-color: coral;
 }
 
+.node.visited {
+  background-color: aquamarine;
+}
+
 
 /* === CONNECTORS === */
 .connector-wrapper {

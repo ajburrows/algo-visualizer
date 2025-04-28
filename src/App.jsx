@@ -4,7 +4,7 @@ Object dimensions
  - Nodes are 60px in diameter
 */
 
-import { useState, useRef } from 'react'
+import { useState, useRef, useEffect } from 'react'
 import './App.css'
 import Connections from './components/Connections.jsx'
 import Grid from './components/Grid.jsx'
@@ -29,6 +29,12 @@ function App(){
     const [endNodeID, setEndNodeID] = useState(null)
     const [targetType, setTargetType] = useState(null) // null | 'start' | 'end'
     const [algorithm, setAlgorithm] = useState('DFS')
+    const [nodeTraversal, setNodeTraversal] = useState(null)
+    const [edgeTraversal, setEdgeTraversal] = useState(null)
+    const [algoPlaying, setAlgoPlaying] = useState(false)
+    const [currentSetp, setCurrentStep] = useState(0)
+    const [stepDelay, setStepDelay] = useState(250)
+    const [visitedNodes, setVisitedNodes] = useState([])
 
     const startConnectorCleanup = useRef(null)
     const editingConnectorCleanup = useRef(null)
@@ -41,6 +47,14 @@ function App(){
     const addNode = () => {
         const newID = nodes.reduce((max,n) => Math.max(max, n.ID), 0) + 1
         setNodes([...nodes, { ID: newID, x: 0, y: 0}])
+    }
+
+    async function animateTraversal(nodeTraversal, edgeTraversal) {
+        for (let i = 0; i < nodeTraversal.length; i++){
+            setVisitedNodes((prev) => [...prev, edgeTraversal[i][1]])
+
+            await new Promise((resolve) => setTimeout(resolve, stepDelay))
+        }
     }
 
     const handleConnectorClick = handleConnectorClickFactory({
@@ -64,15 +78,26 @@ function App(){
             <button onClick={addNode}>Add Node</button>
             {startNodeID && (
                 <button 
-                    onClick={() => 
-                        runAlgorithm({
-                            algorithm,
-                            nodes,
-                            connections,
-                            startID: startNodeID,
-                            endID: endNodeID
-                        })
-                    }
+                    onClick={() => {
+
+                        const [nodeTraversal, edgeTraversal] = runAlgorithm({
+                                            algorithm,
+                                            nodes,
+                                            connections,
+                                            startID: startNodeID,
+                                            endID: endNodeID,
+                                        })
+                        setNodeTraversal(nodeTraversal)
+                        setEdgeTraversal(edgeTraversal)
+                        setCurrentStep(0)
+                        setAlgoPlaying(true)
+                        
+                        console.log('DFS')
+                        console.log(nodeTraversal)
+                        console.log(edgeTraversal)
+
+                        animateTraversal(nodeTraversal, edgeTraversal)
+                    }}
                 >
                     Run {algorithm}
                 </button>
@@ -153,6 +178,7 @@ function App(){
                     setEndNodeID={setEndNodeID}
                     targetType={targetType}
                     algorithm={algorithm}
+                    visitedNodes={visitedNodes}
                 />
             </div>
         </div>

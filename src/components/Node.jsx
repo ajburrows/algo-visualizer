@@ -9,7 +9,8 @@ const Node = ({
     onClick,
     onConnectorClick,
     isStartNode,
-    isEndNode
+    isEndNode,
+    visited
 }) => {
     const [hoveredPos, setHoveredPos] = useState(null)
 
@@ -19,7 +20,8 @@ const Node = ({
                 selected: isSelected,
                 hidden: isHidden,
                 'start-node' : isStartNode,
-                'end-node' : isEndNode
+                'end-node' : isEndNode,
+                'visited' : visited
             })}
             onClick={onClick}
         >
