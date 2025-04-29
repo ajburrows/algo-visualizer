@@ -32,10 +32,11 @@ function App(){
     const [nodeTraversal, setNodeTraversal] = useState(null)
     const [edgeTraversal, setEdgeTraversal] = useState(null)
     const [algoPlaying, setAlgoPlaying] = useState(false)
-    const [currentSetp, setCurrentStep] = useState(0)
-    const [stepDelay, setStepDelay] = useState(250)
+    const [currentStep, setCurrentStep] = useState(0)
+    const [stepDelay, setStepDelay] = useState(500)
     const [visitedNodes, setVisitedNodes] = useState([])
     const [curNode, setCurNode] = useState(null)
+    const [smoothEdgeTrav, setSmoothEdgeTrav] = useState([])
 
     const startConnectorCleanup = useRef(null)
     const editingConnectorCleanup = useRef(null)
@@ -52,12 +53,47 @@ function App(){
 
     async function animateTraversal(nodeTraversal, edgeTraversal) {
         for (let i = 0; i < nodeTraversal.length; i++){
+            setVisitedNodes((prev) => [...prev, edgeTraversal[i][1]])
             const curEdge = edgeTraversal[i]
             setCurNode(curEdge[0])
             await new Promise((resolve) => setTimeout(resolve, stepDelay))
             setVisitedNodes((prev) => [...prev, curEdge[1]])
             setCurNode(curEdge[1])
             await new Promise((resolve) => setTimeout(resolve, stepDelay))
+        }
+    }
+
+    function smoothEdgeTraversal(trav) {
+        const smoothTrav = []
+        let prev = null
+        for (let i = 0; i < trav.length * 2; i++){
+            const curNode = trav[Math.floor(i / 2)][(i % 2)]
+            if (curNode !== prev){
+                smoothTrav.push(curNode)
+            }
+            prev = curNode
+        }
+        console.log(`smoothTrav: ${JSON.stringify(smoothTrav)}`)
+        setSmoothEdgeTrav(smoothTrav)
+    }
+
+    
+
+    function stepForward() {
+        if (currentStep < smoothEdgeTrav.length){
+            const curNode = smoothEdgeTrav[currentStep]
+            setVisitedNodes((prev) => [...prev, curNode])
+            setCurNode(curNode)
+            setCurrentStep((prev) => prev + 1)
+
+        }
+    }
+
+    function stepBackward() {
+        if (currentStep > 0) {
+            setVisitedNodes((prev) => prev.slice(0, -1))
+            setCurNode(smoothEdgeTrav[currentStep - 1])
+            setCurrentStep((prev) => prev - 1)
         }
     }
 
@@ -84,29 +120,57 @@ function App(){
                 <button 
                     onClick={() => {
 
-                        const [nodeTraversal, edgeTraversal] = runAlgorithm({
+                        const [curNodeTraversal, curEdgeTraversal] = runAlgorithm({
                                             algorithm,
                                             nodes,
                                             connections,
                                             startID: startNodeID,
                                             endID: endNodeID,
                                         })
-                        setNodeTraversal(nodeTraversal)
-                        setEdgeTraversal(edgeTraversal)
+                        setNodeTraversal(curNodeTraversal)
+                        setEdgeTraversal(curEdgeTraversal)
                         setCurrentStep(0)
-                        setAlgoPlaying(true)
+                        setAlgoPlaying(prev => !prev)
+                        smoothEdgeTraversal(curEdgeTraversal)
                         
                         console.log('DFS')
-                        console.log(nodeTraversal)
-                        console.log(edgeTraversal)
-
-                        animateTraversal(nodeTraversal, edgeTraversal)
+                        console.log(curNodeTraversal)
+                        console.log(curEdgeTraversal)
                     }}
                 >
-                    Run {algorithm}
+                    Compute {algorithm} Traversal
                 </button>
+            )}
+
+            {nodeTraversal && edgeTraversal && (
+                <>
+                    <button
+                        onClick={() => {
+                            stepBackward()
+                        }}
+                    >
+                        Prev
+                    </button>
+                    {/*}
+                    <button
+                        onClick={() => {
+                            animateTraversal(nodeTraversal, edgeTraversal)
+                        }}
+                    >
+                        Play Traversal
+                    </button>
+                    */}
+                    <button
+                        onClick={() => {
+                            stepForward()
+                        }}
+                    >
+                        Next
+                    </button>
+                </>
 
             )}
+
 
             <div className='target-type-toggle'>
                 <button
