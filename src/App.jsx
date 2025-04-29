@@ -31,16 +31,18 @@ function App(){
     const [algorithm, setAlgorithm] = useState('DFS')
     const [nodeTraversal, setNodeTraversal] = useState(null)
     const [edgeTraversal, setEdgeTraversal] = useState(null)
-    const [algoPlaying, setAlgoPlaying] = useState(false)
-    const [currentStep, setCurrentStep] = useState(0)
+    //const [currentStep, setCurrentStep] = useState(0)
     const [stepDelay, setStepDelay] = useState(500)
     const [visitedNodes, setVisitedNodes] = useState([])
     const [curNode, setCurNode] = useState(null)
     const [smoothEdgeTrav, setSmoothEdgeTrav] = useState([])
+    const [algoPlayingState, setAlgoPlayingState] = useState(false)
 
     const startConnectorCleanup = useRef(null)
     const editingConnectorCleanup = useRef(null)
     const svgRef = useRef(null) // rectangle over the grid where connections are drawn
+    const currentStep = useRef(0)
+    const algoPlaying = useRef(false)
 
     useDragTracker(selectedNodeID, setMousePos, setIsMoving)
     useDeleteConnection(selectedConnection, setSelectedConnection, setConnections)
@@ -51,16 +53,18 @@ function App(){
         setNodes([...nodes, { ID: newID, x: 0, y: 0}])
     }
 
-    async function animateTraversal(nodeTraversal, edgeTraversal) {
-        for (let i = 0; i < nodeTraversal.length; i++){
-            setVisitedNodes((prev) => [...prev, edgeTraversal[i][1]])
-            const curEdge = edgeTraversal[i]
-            setCurNode(curEdge[0])
-            await new Promise((resolve) => setTimeout(resolve, stepDelay))
-            setVisitedNodes((prev) => [...prev, curEdge[1]])
-            setCurNode(curEdge[1])
+    async function animateTraversal() {
+        console.log('In trav')
+        while (currentStep.current < smoothEdgeTrav.length && algoPlaying.current) {
+            console.log(`curStep: ${currentStep.current}`)
+            const curNode = smoothEdgeTrav[currentStep.current]
+            setVisitedNodes((prev) => [...prev, curNode])
+            setCurNode(curNode)
+            //setCurrentStep((prev) => prev + 1)
+            currentStep.current += 1
             await new Promise((resolve) => setTimeout(resolve, stepDelay))
         }
+        setAlgoPlayingState(false)
     }
 
     function smoothEdgeTraversal(trav) {
@@ -78,22 +82,22 @@ function App(){
     }
 
     
-
     function stepForward() {
-        if (currentStep < smoothEdgeTrav.length){
-            const curNode = smoothEdgeTrav[currentStep]
+        if (currentStep.current < smoothEdgeTrav.length){
+            const curNode = smoothEdgeTrav[currentStep.current]
             setVisitedNodes((prev) => [...prev, curNode])
             setCurNode(curNode)
-            setCurrentStep((prev) => prev + 1)
-
+            //setCurrentStep((prev) => prev + 1)
+            currentStep.current += 1
         }
     }
 
     function stepBackward() {
-        if (currentStep > 0) {
+        if (currentStep.current > 0) {
             setVisitedNodes((prev) => prev.slice(0, -1))
-            setCurNode(smoothEdgeTrav[currentStep - 1])
-            setCurrentStep((prev) => prev - 1)
+            setCurNode(smoothEdgeTrav[currentStep.current - 1])
+            //setCurrentStep((prev) => prev - 1)
+            currentStep.current -= 1
         }
     }
 
@@ -129,8 +133,8 @@ function App(){
                                         })
                         setNodeTraversal(curNodeTraversal)
                         setEdgeTraversal(curEdgeTraversal)
-                        setCurrentStep(0)
-                        setAlgoPlaying(prev => !prev)
+                        //setCurrentStep(0)
+                        currentStep.current = 0
                         smoothEdgeTraversal(curEdgeTraversal)
                         
                         console.log('DFS')
@@ -151,15 +155,27 @@ function App(){
                     >
                         Prev
                     </button>
-                    {/*}
-                    <button
-                        onClick={() => {
-                            animateTraversal(nodeTraversal, edgeTraversal)
-                        }}
-                    >
-                        Play Traversal
-                    </button>
-                    */}
+                    { algoPlaying.current === false && (                    
+                        <button
+                            onClick={() => {
+                                algoPlaying.current = true
+                                setAlgoPlayingState(true)   
+                                animateTraversal()
+                            }}
+                        >
+                            Play Traversal
+                        </button>
+                    )}
+                    { algoPlaying.current === true && (
+                        <button
+                            onClick={() => {
+                                algoPlaying.current = false
+                                setAlgoPlayingState(false)
+                            }}>
+                            Pause Traversal
+                        </button>
+                    )}
+
                     <button
                         onClick={() => {
                             stepForward()
