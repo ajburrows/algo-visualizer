@@ -35,6 +35,7 @@ function App(){
     const [currentSetp, setCurrentStep] = useState(0)
     const [stepDelay, setStepDelay] = useState(250)
     const [visitedNodes, setVisitedNodes] = useState([])
+    const [curNode, setCurNode] = useState(null)
 
     const startConnectorCleanup = useRef(null)
     const editingConnectorCleanup = useRef(null)
@@ -51,8 +52,11 @@ function App(){
 
     async function animateTraversal(nodeTraversal, edgeTraversal) {
         for (let i = 0; i < nodeTraversal.length; i++){
-            setVisitedNodes((prev) => [...prev, edgeTraversal[i][1]])
-
+            const curEdge = edgeTraversal[i]
+            setCurNode(curEdge[0])
+            await new Promise((resolve) => setTimeout(resolve, stepDelay))
+            setVisitedNodes((prev) => [...prev, curEdge[1]])
+            setCurNode(curEdge[1])
             await new Promise((resolve) => setTimeout(resolve, stepDelay))
         }
     }
@@ -179,6 +183,7 @@ function App(){
                     targetType={targetType}
                     algorithm={algorithm}
                     visitedNodes={visitedNodes}
+                    curNode={curNode}
                 />
             </div>
         </div>

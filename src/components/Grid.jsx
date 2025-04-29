@@ -20,7 +20,8 @@ export default function Grid({
     setEndNodeID,
     targetType,
     algorithm,
-    visitedNodes
+    visitedNodes,
+    curNode
 }) {
     const moveNode = (id, x, y) =>
         setNodes((nodes) =>
@@ -88,6 +89,7 @@ export default function Grid({
                                 isStartNode={node.ID === startNodeID}
                                 isEndNode={node.ID === endNodeID}
                                 visited={visitedNodes && visitedNodes.includes(node.ID)}
+                                isCurNode={curNode === node.ID}
                             />
                         )}
                     </div>

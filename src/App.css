@@ -57,9 +57,13 @@
 }
 
 .node.visited {
-  background-color: aquamarine;
+  background-color: aqua;
 }
 
+
+.node.cur-node {
+  border: solid red;
+}
 
 /* === CONNECTORS === */
 .connector-wrapper {
